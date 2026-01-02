@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terminal Arcade - Retro Computing Interface</title>
+    <script src="/_sdk/element_sdk.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap");
+
+      body {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Courier Prime", "Courier New", monospace;
+        background: #000000;
+        color: #00ff00;
+        overflow-x: hidden;
+        line-height: 1.4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      /* Main Container */
+      .container {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Terminal Screen Style */
+      .arcade-screen {
+        background: #000000;
+        border: 2px solid #00ff00;
+        margin: 20px;
+        padding: 40px;
+        position: relative;
+      }
+
+      /* Hero Section */
+      .hero {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 20px;
+        position: relative;
+      }
+
+      .arcade-logo {
+        font-size: 4rem;
+        font-weight: 700;
+        font-family: "Courier Prime", monospace;
+        color: #00ff00;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+      }
+
+      .arcade-subtitle {
+        font-size: 1.5rem;
+        color: #ffffff;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: 400;
+      }
+
+      .arcade-tagline {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto 20px;
+        color: #00ff00;
+        font-weight: 400;
+      }
+
+      .arcade-description {
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 0 auto 40px;
+        color: #cccccc;
+        font-weight: 300;
+      }
+
+      .pixel-text {
+        font-family: "Courier Prime", monospace;
+        font-size: 1.1rem;
+        color: #ffffff;
+        margin: 30px 0;
+        font-weight: 400;
+      }
+
+      .player-message {
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 30px auto;
+        color: #00ff00;
+        font-family: "Courier Prime", monospace;
+        border: 1px solid #00ff00;
+        padding: 15px;
+        background: #000000;
+      }
+
+      .start-button {
+        display: inline-block;
+        padding: 20px 60px;
+        background: #000000;
+        color: #00ff00;
+        text-decoration: none;
+        border: 2px solid #00ff00;
+        font-weight: 700;
+        font-size: 1.3rem;
+        font-family: "Courier Prime", monospace;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+      }
+
+      /* Game Selection */
+      .game-section {
+        padding: 80px 20px;
+        text-align: center;
+      }
+
+      .arcade-title {
+        font-size: 3rem;
+        font-weight: 700;
+        font-family: "Courier Prime", monospace;
+        color: #00ff00;
+        margin-bottom: 60px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+      }
+
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .game-card {
+        background: #000000;
+        border: 1px solid #00ff00;
+        padding: 30px;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .game-card:hover {
+        background: #000000;
+      }
+
+      .game-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #00ff00;
+      }
+
+      .game-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 15px;
+        font-family: "Courier Prime", monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .game-description {
+        color: #cccccc;
+        margin-bottom: 25px;
+        line-height: 1.5;
+        font-size: 0.9rem;
+      }
+
+      .game-link {
+        display: inline-block;
+        color: #00ff00;
+        text-decoration: none;
+        font-weight: 700;
+        font-family: "Courier Prime", monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid #00ff00;
+        padding: 10px 20px;
+      }
+
+      /* High Scores Section */
+      .high-scores-section {
+        padding: 80px 20px;
+        background: #000000;
+        text-align: center;
+      }
+
+      .high-scores-board {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #000000;
+        border: 2px solid #00ff00;
+        padding: 40px;
+      }
+
+      .score-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #333333;
+        font-family: "Courier Prime", monospace;
+        font-size: 1.1rem;
+      }
+
+      .score-item:last-child {
+        border-bottom: none;
+      }
+
+      .score-rank {
+        color: #00ff00;
+        font-weight: 700;
+      }
+
+      .score-name {
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .score-points {
+        color: #00ff00;
+        font-weight: 700;
+      }
+
+      /* Philosophy Arcade */
+      .philosophy-arcade {
+        padding: 80px 20px;
+        background: #000000;
+        text-align: center;
+      }
+
+      .philosophy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .philosophy-card {
+        background: #000000;
+        border: 1px solid #00ff00;
+        padding: 30px;
+        position: relative;
+      }
+
+      .philosophy-card:hover {
+        background: #000000;
+      }
+
+      .philosophy-icon {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #00ff00;
+      }
+
+      .philosophy-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 15px;
+        font-family: "Courier Prime", monospace;
+        text-transform: uppercase;
+      }
+
+      .philosophy-text {
+        color: #cccccc;
+        line-height: 1.5;
+        font-size: 0.9rem;
+      }
+
+      /* Footer */
+      .footer {
+        background: #000000;
+        padding: 60px 20px 40px;
+        text-align: center;
+        border-top: 2px solid #00ff00;
+        position: relative;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .footer-link {
+        color: #00ff00;
+        text-decoration: none;
+        font-weight: 700;
+        font-family: "Courier Prime", monospace;
+        text-transform: uppercase;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        border: 1px solid #00ff00;
+        padding: 10px 15px;
+      }
+
+      .footer-credits {
+        color: #888;
+        font-size: 0.9rem;
+        font-family: "Courier Prime", monospace;
+        margin-top: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .arcade-screen {
+          margin: 10px;
+          padding: 20px;
+        }
+
+        .hero {
+          padding: 40px 15px;
+        }
+
+        .arcade-logo {
+          font-size: 2.5rem;
+          letter-spacing: 2px;
+          margin-bottom: 15px;
+        }
+
+        .arcade-subtitle {
+          font-size: 1.1rem;
+          letter-spacing: 2px;
+          margin-bottom: 25px;
+        }
+
+        .arcade-tagline {
+          font-size: 1rem;
+          margin-bottom: 15px;
+        }
+
+        .arcade-description {
+          font-size: 0.9rem;
+          margin-bottom: 30px;
+        }
+
+        .pixel-text {
+          font-size: 0.95rem;
+          margin: 25px 0;
+        }
+
+        .player-message {
+          font-size: 0.85rem;
+          margin: 25px auto;
+          padding: 12px;
+        }
+
+        .start-button {
+          padding: 15px 40px;
+          font-size: 1rem;
+          letter-spacing: 1px;
+        }
+
+        .arcade-title {
+          font-size: 2rem;
+          margin-bottom: 40px;
+          letter-spacing: 2px;
+        }
+
+        .game-section,
+        .high-scores-section,
+        .philosophy-arcade {
+          padding: 60px 15px;
+        }
+
+        .games-grid {
+          grid-template-columns: 1fr;
+          gap: 25px;
+          margin-top: 30px;
+        }
+
+        .game-card {
+          padding: 25px;
+        }
+
+        .game-icon {
+          font-size: 2.5rem;
+          margin-bottom: 15px;
+        }
+
+        .game-title {
+          font-size: 1.2rem;
+          margin-bottom: 12px;
+        }
+
+        .game-description {
+          font-size: 0.85rem;
+          margin-bottom: 20px;
+        }
+
+        .game-link {
+          padding: 8px 16px;
+          font-size: 0.8rem;
+        }
+
+        .high-scores-board {
+          padding: 30px 20px;
+        }
+
+        .score-item {
+          font-size: 0.95rem;
+          padding: 12px 0;
+        }
+
+        .philosophy-grid {
+          gap: 25px;
+          margin-top: 30px;
+        }
+
+        .philosophy-card {
+          padding: 25px;
+        }
+
+        .philosophy-icon {
+          font-size: 2rem;
+          margin-bottom: 15px;
+        }
+
+        .philosophy-name {
+          font-size: 1rem;
+          margin-bottom: 12px;
+        }
+
+        .philosophy-text {
+          font-size: 0.85rem;
+        }
+
+        .footer {
+          padding: 40px 15px 30px;
+        }
+
+        .footer-links {
+          gap: 20px;
+          margin-bottom: 25px;
+        }
+
+        .footer-link {
+          font-size: 0.85rem;
+          padding: 8px 12px;
+        }
+
+        .footer-credits {
+          font-size: 0.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .arcade-logo {
+          font-size: 2rem;
+          letter-spacing: 1px;
+        }
+
+        .arcade-subtitle {
+          font-size: 0.9rem;
+          letter-spacing: 1px;
+        }
+
+        .arcade-tagline {
+          font-size: 0.85rem;
+        }
+
+        .arcade-description {
+          font-size: 0.8rem;
+        }
+
+        .pixel-text {
+          font-size: 0.85rem;
+        }
+
+        .player-message {
+          font-size: 0.75rem;
+          padding: 10px;
+        }
+
+        .start-button {
+          padding: 12px 30px;
+          font-size: 0.9rem;
+        }
+
+        .arcade-title {
+          font-size: 1.6rem;
+          letter-spacing: 1px;
+        }
+
+        .game-card {
+          padding: 20px;
+        }
+
+        .game-icon {
+          font-size: 2.2rem;
+        }
+
+        .game-title {
+          font-size: 1.1rem;
+        }
+
+        .game-description {
+          font-size: 0.8rem;
+        }
+
+        .high-scores-board {
+          padding: 25px 15px;
+        }
+
+        .score-item {
+          font-size: 0.85rem;
+          padding: 10px 0;
+        }
+
+        .philosophy-card {
+          padding: 20px;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .footer-link {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body>
+    <!-- Terminal Screen Container -->
+    <div class="arcade-screen">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="container">
+          <h1 class="arcade-logo" id="arcadeTitle" data-text="CLANCY PINK PUNK">
+            CLANCY PINK PUNK
+          </h1>
+          <div class="arcade-subtitle" id="arcadeSubtitle">TERMINAL ARCADE</div>
+          <p class="arcade-tagline" id="arcadeTagline">$ ./start_game.sh</p>
+          <p class="arcade-description" id="arcadeDescription">
+            Simple terminal interface for retro gaming
+          </p>
+          <div class="pixel-text">
+            &gt;&gt;&gt; SYSTEM READY... AWAITING INPUT &lt;&lt;&lt;
+          </div>
+          <p class="player-message" id="playerMessage">
+            user@terminal:~$ player_1_ready
+          </p>
+          <a href="#games" class="start-button" id="arcadeCta">EXECUTE</a>
+        </div>
+      </section>
+      <!-- Game Selection -->
+      <section class="game-section" id="games">
+        <div class="container">
+          <h2 class="arcade-title" id="gameTitle">SELECT PROGRAM</h2>
+          <div class="games-grid">
+            <div class="game-card">
+              <div class="game-icon">[WEB]</div>
+              <h3 class="game-title">DEV_QUEST.EXE</h3>
+              <p class="game-description">
+                Command-line adventure through digital realms. Debug code,
+                collect resources, unlock new functions.
+              </p>
+              <a href="#" class="game-link">RUN</a>
+            </div>
+            <div class="game-card">
+              <div class="game-icon">[RACE]</div>
+              <h3 class="game-title">WU_WEI_RACER.BIN</h3>
+              <p class="game-description">
+                ASCII racing simulator. Navigate through text-based tracks using
+                keyboard controls.
+              </p>
+              <a href="#" class="game-link">EXEC</a>
+            </div>
+            <div class="game-card">
+              <div class="game-icon">[PUZZLE]</div>
+              <h3 class="game-title">ANATTA_LOGIC.COM</h3>
+              <p class="game-description">
+                Terminal puzzle game. Solve logical problems using command-line
+                interface.
+              </p>
+              <a href="#" class="game-link">LOAD</a>
+            </div>
+            <div class="game-card">
+              <div class="game-icon">[FIGHT]</div>
+              <h3 class="game-title">ZINE_FIGHTER.SH</h3>
+              <p class="game-description">
+                Text-based fighting game. Battle using keyboard combinations and
+                terminal commands.
+              </p>
+              <a href="#" class="game-link">START</a>
+            </div>
+            <div class="game-card">
+              <div class="game-icon">[MUSIC]</div>
+              <h3 class="game-title">RHYTHM_TERM.PY</h3>
+              <p class="game-description">
+                ASCII rhythm game. Hit keys in time with terminal-generated
+                beats.
+              </p>
+              <a href="#" class="game-link">PLAY</a>
+            </div>
+            <div class="game-card">
+              <div class="game-icon">[CODE]</div>
+              <h3 class="game-title">VIBE_CODING.JS</h3>
+              <p class="game-description">
+                Programming meditation simulator. Write code in zen mode using
+                terminal editor.
+              </p>
+              <a href="#" class="game-link">INIT</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- High Scores -->
+      <section class="high-scores-section">
+        <div class="container">
+          <h2 class="arcade-title" id="highScoreTitle">SYSTEM LOGS</h2>
+          <div class="high-scores-board">
+            <div class="score-item">
+              <span class="score-rank">01.</span>
+              <span class="score-name">CLANCY</span>
+              <span class="score-points">999999</span>
+            </div>
+            <div class="score-item">
+              <span class="score-rank">02.</span>
+              <span class="score-name">YOGANANDA</span>
+              <span class="score-points">888888</span>
+            </div>
+            <div class="score-item">
+              <span class="score-rank">03.</span>
+              <span class="score-name">STEVE</span>
+              <span class="score-points">777777</span>
+            </div>
+            <div class="score-item">
+              <span class="score-rank">04.</span>
+              <span class="score-name">TRIRATNA</span>
+              <span class="score-points">666666</span>
+            </div>
+            <div class="score-item">
+              <span class="score-rank">05.</span>
+              <span class="score-name">DELULU</span>
+              <span class="score-points">555555</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Philosophy Arcade -->
+      <section class="philosophy-arcade">
+        <div class="container">
+          <h2 class="arcade-title">SYSTEM MODULES</h2>
+          <div class="philosophy-grid">
+            <div class="philosophy-card">
+              <div class="philosophy-icon">[BOOST]</div>
+              <h3 class="philosophy-name">VIBRATION.DLL</h3>
+              <p class="philosophy-text">
+                Energy amplification module. Increases system frequency and
+                processing power.
+              </p>
+            </div>
+            <div class="philosophy-card">
+              <div class="philosophy-icon">[SHIELD]</div>
+              <h3 class="philosophy-name">SIMPLICITY.SYS</h3>
+              <p class="philosophy-text">
+                Protection protocol. Filters unnecessary complexity and bloated
+                processes.
+              </p>
+            </div>
+            <div class="philosophy-card">
+              <div class="philosophy-icon">[MULTI]</div>
+              <h3 class="philosophy-name">DHARMA.LIB</h3>
+              <p class="philosophy-text">
+                Wisdom library. Multiplies ethical processing and community
+                connections.
+              </p>
+            </div>
+            <div class="philosophy-card">
+              <div class="philosophy-icon">[BOMB]</div>
+              <h3 class="philosophy-name">GLITTER.EXE</h3>
+              <p class="philosophy-text">
+                Ultimate transformation utility. Converts all data into
+                optimized format.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-links">
+          <a href="#" class="footer-link">INSTAGRAM.SH</a>
+          <a href="#" class="footer-link">BEHANCE.COM</a>
+          <a href="#" class="footer-link">SOUND.WAV</a>
+          <a href="#" class="footer-link">ZINE.TXT</a>
+          <a href="#" class="footer-link">WU_WEI.PY</a>
+          <a href="#" class="footer-link">ANATTA.JS</a>
+        </div>
+        <p class="footer-credits" id="footerCredits">
+          © 2025 TERMINAL ARCADE - CONNECTION TERMINATED
+        </p>
+      </div>
+    </footer>
+    <script>
+      const defaultConfig = {
+        background_color: "#000000",
+        primary_color: "#00ff00",
+        secondary_color: "#ffffff",
+        text_color: "#00ff00",
+        surface_color: "#001100",
+        font_family: "Courier Prime",
+        font_size: 16,
+        arcade_title: "CLANCY PINK PUNK",
+        arcade_subtitle: "TERMINAL ARCADE",
+        arcade_tagline: "$ ./start_game.sh",
+        arcade_description: "Simple terminal interface for retro gaming",
+        arcade_cta: "EXECUTE",
+        player_message: "user@terminal:~$ player_1_ready",
+        game_title: "SELECT PROGRAM",
+        high_score_title: "SYSTEM LOGS",
+        footer_credits: "© 2025 TERMINAL ARCADE - CONNECTION TERMINATED",
+      };
+
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+      async function onConfigChange(config) {
+        const customFont = config.font_family || defaultConfig.font_family;
+        const baseSize = config.font_size || defaultConfig.font_size;
+        const baseFontStack = "Courier New, monospace";
+
+        document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        document.body.style.fontSize = `${baseSize}px`;
+        document.body.style.backgroundColor =
+          config.background_color || defaultConfig.background_color;
+        document.body.style.color =
+          config.text_color || defaultConfig.text_color;
+
+        const logo = document.querySelector(".arcade-logo");
+        logo.style.fontSize = `${baseSize * 2.5}rem`;
+        logo.style.color = config.primary_color || defaultConfig.primary_color;
+
+        const subtitle = document.querySelector(".arcade-subtitle");
+        subtitle.style.fontSize = `${baseSize * 0.9375}rem`;
+        subtitle.style.color =
+          config.secondary_color || defaultConfig.secondary_color;
+
+        const arcadeTitles = document.querySelectorAll(".arcade-title");
+        arcadeTitles.forEach((title) => {
+          title.style.fontSize = `${baseSize * 1.875}rem`;
+          title.style.color =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const gameCards = document.querySelectorAll(".game-card");
+        gameCards.forEach((card) => {
+          card.style.borderColor =
+            config.primary_color || defaultConfig.primary_color;
+          card.style.backgroundColor =
+            config.background_color || defaultConfig.background_color;
+        });
+
+        const gameIcons = document.querySelectorAll(".game-icon");
+        gameIcons.forEach((icon) => {
+          icon.style.color =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const gameTitles = document.querySelectorAll(".game-title");
+        gameTitles.forEach((title) => {
+          title.style.color =
+            config.secondary_color || defaultConfig.secondary_color;
+        });
+
+        const gameLinks = document.querySelectorAll(".game-link");
+        gameLinks.forEach((link) => {
+          link.style.color =
+            config.primary_color || defaultConfig.primary_color;
+          link.style.borderColor =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const startButton = document.querySelector(".start-button");
+        startButton.style.color =
+          config.primary_color || defaultConfig.primary_color;
+        startButton.style.borderColor =
+          config.primary_color || defaultConfig.primary_color;
+        startButton.style.backgroundColor =
+          config.background_color || defaultConfig.background_color;
+        startButton.style.fontSize = `${baseSize * 0.8125}rem`;
+
+        const scoreRanks = document.querySelectorAll(".score-rank");
+        scoreRanks.forEach((rank) => {
+          rank.style.color =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const scorePoints = document.querySelectorAll(".score-points");
+        scorePoints.forEach((points) => {
+          points.style.color =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const philosophyCards = document.querySelectorAll(".philosophy-card");
+        philosophyCards.forEach((card) => {
+          card.style.borderColor =
+            config.primary_color || defaultConfig.primary_color;
+          card.style.backgroundColor =
+            config.background_color || defaultConfig.background_color;
+        });
+
+        const philosophyIcons = document.querySelectorAll(".philosophy-icon");
+        philosophyIcons.forEach((icon) => {
+          icon.style.color =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const philosophyNames = document.querySelectorAll(".philosophy-name");
+        philosophyNames.forEach((name) => {
+          name.style.color =
+            config.secondary_color || defaultConfig.secondary_color;
+        });
+
+        const footerLinks = document.querySelectorAll(".footer-link");
+        footerLinks.forEach((link) => {
+          link.style.color =
+            config.primary_color || defaultConfig.primary_color;
+          link.style.borderColor =
+            config.primary_color || defaultConfig.primary_color;
+        });
+
+        const footer = document.querySelector(".footer");
+        footer.style.borderTopColor =
+          config.primary_color || defaultConfig.primary_color;
+
+        const arcadeScreen = document.querySelector(".arcade-screen");
+        arcadeScreen.style.borderColor =
+          config.primary_color || defaultConfig.primary_color;
+
+        document.getElementById("arcadeTitle").textContent =
+          config.arcade_title || defaultConfig.arcade_title;
+        document.getElementById("arcadeSubtitle").textContent =
+          config.arcade_subtitle || defaultConfig.arcade_subtitle;
+        document.getElementById("arcadeTagline").textContent =
+          config.arcade_tagline || defaultConfig.arcade_tagline;
+        document.getElementById("arcadeDescription").textContent =
+          config.arcade_description || defaultConfig.arcade_description;
+        document.getElementById("arcadeCta").textContent =
+          config.arcade_cta || defaultConfig.arcade_cta;
+        document.getElementById("playerMessage").textContent =
+          config.player_message || defaultConfig.player_message;
+        document.getElementById("gameTitle").textContent =
+          config.game_title || defaultConfig.game_title;
+        document.getElementById("highScoreTitle").textContent =
+          config.high_score_title || defaultConfig.high_score_title;
+        document.getElementById("footerCredits").textContent =
+          config.footer_credits || defaultConfig.footer_credits;
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () =>
+                  config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                },
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                },
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                },
+              },
+              {
+                get: () => config.primary_color || defaultConfig.primary_color,
+                set: (value) => {
+                  config.primary_color = value;
+                  window.elementSdk.setConfig({ primary_color: value });
+                },
+              },
+              {
+                get: () =>
+                  config.secondary_color || defaultConfig.secondary_color,
+                set: (value) => {
+                  config.secondary_color = value;
+                  window.elementSdk.setConfig({ secondary_color: value });
+                },
+              },
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              },
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              },
+            },
+          }),
+          mapToEditPanelValues: (config) =>
+            new Map([
+              [
+                "arcade_title",
+                config.arcade_title || defaultConfig.arcade_title,
+              ],
+              [
+                "arcade_subtitle",
+                config.arcade_subtitle || defaultConfig.arcade_subtitle,
+              ],
+              [
+                "arcade_tagline",
+                config.arcade_tagline || defaultConfig.arcade_tagline,
+              ],
+              [
+                "arcade_description",
+                config.arcade_description || defaultConfig.arcade_description,
+              ],
+              ["arcade_cta", config.arcade_cta || defaultConfig.arcade_cta],
+              [
+                "player_message",
+                config.player_message || defaultConfig.player_message,
+              ],
+              ["game_title", config.game_title || defaultConfig.game_title],
+              [
+                "high_score_title",
+                config.high_score_title || defaultConfig.high_score_title,
+              ],
+              [
+                "footer_credits",
+                config.footer_credits || defaultConfig.footer_credits,
+              ],
+            ]),
+        });
+      }
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9b78802f805feef2',t:'MTc2NzMzODQ5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
